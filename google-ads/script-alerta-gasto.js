@@ -56,4 +56,28 @@ function verificarGastosConta() {
     }
   }
   
-  return aler
+  return alertasConta.join("\n"); 
+}
+
+function enviarEmailFinal(resultados) {
+  var todosAlertas = [];
+  
+  for (var i = 0; i < resultados.length; i++) {
+    var resultadoConta = resultados[i].getReturnValue();
+    if (resultadoConta && resultadoConta !== "") {
+      todosAlertas.push(resultadoConta);
+    }
+  }
+  
+  if (todosAlertas.length > 0) {
+    var assunto = "⚠️ ALERTA GOOGLE ADS: Campanhas paradas ou com baixo gasto!";
+    var corpoEmail = "Olá!\n\nO radar da MCC identificou que as campanhas abaixo estão gastando muito pouco (ou nada) hoje. Verifique possíveis erros de tag, falta de pagamento ou anúncios reprovados:\n\n" + 
+                     todosAlertas.join("\n") + 
+                     "\n\nPor favor, dê uma olhada nas contas o quanto antes.";
+                     
+    MailApp.sendEmail(EMAIL_ALERTA, assunto, corpoEmail);
+    Logger.log("E-mail de alerta enviado com sucesso!");
+  } else {
+    Logger.log("Sucesso: Todas as contas selecionadas estão gastando normalmente.");
+  }
+}
